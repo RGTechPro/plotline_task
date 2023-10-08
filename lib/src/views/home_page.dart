@@ -19,21 +19,21 @@ class HomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyToolTip(child: MyButton(text: 'Button 1', onPressed: () {})),
-                    MyToolTip(child: MyButton(text: 'Button 2', onPressed: () {}))
+                    MyToolTip(child: MyButton(text: 'Button 1', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,),
+                    MyToolTip(child: MyButton(text: 'Button 2', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,)
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    MyToolTip(child: MyButton(text: 'Button 3', onPressed: () {})),
+                    MyToolTip(child: MyButton(text: 'Button 3', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyToolTip(child: MyButton(text: 'Button 4', onPressed: () {})),
-                    MyToolTip(child: MyButton(text: 'Button 5', onPressed: () {}))
+                    MyToolTip(child: MyButton(text: 'Button 4', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,),
+                    MyToolTip(child: MyButton(text: 'Button 5', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,)
                   ],
                 ),
               ]),
