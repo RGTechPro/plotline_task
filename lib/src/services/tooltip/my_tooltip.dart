@@ -6,7 +6,7 @@ class MyToolTip extends StatefulWidget {
   const MyToolTip(
       {super.key,
       required this.child,
-      this.tooltipPosition = TooltipPosition.auto});
+      this.tooltipPosition = TooltipPosition.top});
 
   final Widget child;
   final TooltipPosition tooltipPosition;
@@ -29,13 +29,29 @@ class _MyToolTipState extends State<MyToolTip> {
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
-
-    leftpos = offset.dx - 125 + size.width / 2;
+  leftpos = offset.dx - 125 + size.width / 2;
     rightpos = leftpos + 250;
-    toppos = offset.dy + size.height;
-    if (widget.tooltipPosition == TooltipPosition.top) {
-      setRelativePositionToTop(offset);
+
+    switch (widget.tooltipPosition) {
+      case TooltipPosition.top:
+        setRelativePositionToTop(offset);
+        break;
+      case TooltipPosition.left:
+        setRelativePositionToLeft(offset);
+        break;
+      case TooltipPosition.right:
+        setrelativePositionToRight(offset, size);
+        break;
+      case TooltipPosition.bottom:
+        setRelativePositionToBottom(offset, size);
+      case TooltipPosition.auto:
+        setRelativePositionToBottom(offset, size);
+
+        break;
+      default:
+        setRelativePositionToBottom(offset, size);
     }
+
     TooltipPosition newTooltipPosition = readjust(offset, size);
     final entry = OverlayEntry(
       builder: (context) {
@@ -53,18 +69,18 @@ class _MyToolTipState extends State<MyToolTip> {
   }
 
   TooltipPosition readjust(Offset offset, Size size) {
-    TooltipPosition newTooltipPosition=TooltipPosition.auto;
+    TooltipPosition newTooltipPosition = widget.tooltipPosition;
     //readjustment vertically
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     if (toppos < 35) {
       toppos = offset.dy + size.height;
-     newTooltipPosition=TooltipPosition.bottom;
+      newTooltipPosition = TooltipPosition.bottom;
     }
 
     if (screenHeight - toppos < 35) {
       toppos = offset.dy - 35;
-    newTooltipPosition= TooltipPosition.top;
+      newTooltipPosition = TooltipPosition.top;
     }
     ///////
 
@@ -77,6 +93,21 @@ class _MyToolTipState extends State<MyToolTip> {
     }
     //////
     return newTooltipPosition;
+  }
+
+  void setRelativePositionToLeft(Offset offset) {
+    leftpos = offset.dx - 250;
+    toppos = offset.dy;
+  }
+
+  void setrelativePositionToRight(Offset offset, Size size) {
+    leftpos = offset.dx + size.width;
+    toppos = offset.dy;
+  }
+
+  void setRelativePositionToBottom(Offset offset, Size size) {
+ 
+    toppos = offset.dy + size.height;
   }
 
   Widget buildOverlay({required TooltipPosition tooltipPosition}) {
