@@ -8,14 +8,14 @@ class MyToolTip extends StatefulWidget {
   const MyToolTip({
     super.key,
     required this.child,
-    this.tooltipPosition = TooltipPosition.bottom,
+   
   
      this.tooltipProperty
     //required this.refresh
   });
 
   final Widget child;
-  final TooltipPosition tooltipPosition;
+
 
  final TooltipProperties? tooltipProperty;
   // VoidCallback refresh;
@@ -52,10 +52,10 @@ class _MyToolTipState extends State<MyToolTip> {
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
-    leftpos = offset.dx - 125 + size.width / 2;
-    rightpos = leftpos + 250;
+    leftpos = offset.dx -  widget.tooltipProperty!.tooltipWidth/2 + size.width / 2;
+    rightpos = leftpos +  widget.tooltipProperty!.tooltipWidth;
 
-    switch (widget.tooltipPosition) {
+    switch (widget.tooltipProperty!.tooltipPosition) {
       case TooltipPosition.top:
         setRelativePositionToTop(offset);
         break;
@@ -88,7 +88,7 @@ class _MyToolTipState extends State<MyToolTip> {
   }
 
   TooltipPosition readjust(Offset offset, Size size) {
-    TooltipPosition newTooltipPosition = widget.tooltipPosition;
+    TooltipPosition newTooltipPosition = widget.tooltipProperty!.tooltipPosition;
     //readjustment vertically
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
@@ -120,8 +120,8 @@ class _MyToolTipState extends State<MyToolTip> {
   }
 
   void setRelativePositionToLeft(Offset offset) {
-    leftpos = offset.dx - 250 - widget.tooltipProperty!.arrowHeight;
-    rightpos = leftpos + 250 + widget.tooltipProperty!.arrowHeight;
+    leftpos = offset.dx - widget.tooltipProperty!.tooltipWidth - widget.tooltipProperty!.arrowHeight;
+    rightpos = leftpos +  widget.tooltipProperty!.tooltipWidth + widget.tooltipProperty!.arrowHeight;
 
     toppos = offset.dy + 5;
   }
@@ -151,7 +151,7 @@ class _MyToolTipState extends State<MyToolTip> {
           height: 35,
           width: widget.tooltipProperty!.tooltipWidth,
           decoration: ShapeDecoration(
-            color: Colors.black,
+            color: widget.tooltipProperty!.backgroundColor,
             shape: TooltipBorder(
                 renderBox: renderBox,
                 tooltipPosition: tooltipPosition,
@@ -168,7 +168,7 @@ class _MyToolTipState extends State<MyToolTip> {
            widget.tooltipProperty!.tooltipText,
             style: TextStyle(
               fontSize: widget.tooltipProperty!.textSize,
-              color: Colors.white, // Set the text color
+              color: widget.tooltipProperty!.textColor, // Set the text color
             ),
           ),
         ),

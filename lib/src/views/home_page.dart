@@ -38,13 +38,13 @@ class _HomePageState extends State<HomePage> {
                     
                     MyToolTip(
                       
-                        tooltipPosition: bjkb,
+                      
                        tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
                      //  tooltipProperty: tooltipProperties[0],
                         child: MyButton(text: 'Button 1', onPressed: () {})),
                     MyToolTip(
                    
-                        tooltipPosition: bjkb,
+                       
                                                // tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 2'),
                         child: MyButton(text: 'Button 2', onPressed: () {}))
                   ],
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     MyToolTip(
           
-                        tooltipPosition: bjkb,
+                       
                                              //   tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
                         child: MyButton(text: 'Button 3', onPressed: () {})),
                   ],
@@ -64,12 +64,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     MyToolTip(
                     
-                        tooltipPosition: bjkb,
+                      
                                               //  tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
                         child: MyButton(text: 'Button 4', onPressed: () {})),
                     MyToolTip(
                      
-                        tooltipPosition: bjkb,
+                       
                                              //   tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
                         child: MyButton(text: 'Button 5', onPressed: () {}))
                   ],

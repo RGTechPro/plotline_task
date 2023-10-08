@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plotline_task/src/constants.dart';
 import 'package:plotline_task/src/models/tooltip_model.dart';
+import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 import 'package:plotline_task/src/views/home_page.dart';
-
+import 'package:image_picker/image_picker.dart';
 import '../widgets/my_color_picker.dart';
 
 class TooltipForm extends StatefulWidget {
@@ -24,10 +26,11 @@ class _TooltipFormState extends State<TooltipForm> {
   final tooltipWidthController = TextEditingController();
   final arrowWidthController = TextEditingController();
   final arrowHeightController = TextEditingController();
-  String selectedTooltipPosition = 'top'; // Default position
-  Color textColor = Colors.black;
-  Color backgroundColor = Colors.white;
-
+  TooltipPosition? tooltipPosition = TooltipPosition.auto;
+  String selectedTooltipPosition = 'auto'; // Default position
+  Color textColor = Colors.white;
+  Color backgroundColor = Colors.black;
+  XFile? image;
   @override
   void dispose() {
     targetElementController.dispose();
@@ -354,8 +357,8 @@ class _TooltipFormState extends State<TooltipForm> {
                   ],
                 ),
 
-
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
                       flex: 1,
@@ -382,13 +385,16 @@ class _TooltipFormState extends State<TooltipForm> {
                             onChanged: (value) {
                               setState(() {
                                 selectedTooltipPosition = value!;
+                               tooltipPosition = TooltipPosition.values
+                                    .firstWhere(
+                                        (e) => e.name == selectedTooltipPosition);
                               });
                             },
                           ),
                         ],
                       ),
                     ),
-                     Flexible(
+                    Flexible(
                       flex: 1,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,22 +406,20 @@ class _TooltipFormState extends State<TooltipForm> {
                               style: kFormLabelTextStyle,
                             ),
                           ),
-                          DropdownButtonFormField<String>(
-                            decoration: kFromInputDecoration,
-                            value: selectedTooltipPosition,
-                            items: ['top', 'bottom', 'right', 'left', 'auto']
-                                .map((position) {
-                              return DropdownMenuItem<String>(
-                                value: position,
-                                child: Text(position),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedTooltipPosition = value!;
-                              });
+                          GestureDetector(
+                            onTap: () async {
+                              await pickImage();
                             },
-                          ),
+                            child: Container(
+                              height: 45,
+                              width: 180,
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Color(0xffD9D9D9)),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Icon(Icons.image),
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -438,7 +442,6 @@ class _TooltipFormState extends State<TooltipForm> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                   
                             if (mounted) {
                               Navigator.push(
                                   context,
@@ -466,7 +469,10 @@ class _TooltipFormState extends State<TooltipForm> {
                                                 arrowWidth: double.parse(
                                                     arrowHeightController.text),
                                                 arrowHeight: double.parse(
-                                                    arrowHeightController.text)),
+                                                  arrowHeightController.text,
+                                                ),
+                                                tooltipPosition:
+                                                    tooltipPosition!),
                                           )));
                             }
                           }
@@ -485,5 +491,16 @@ class _TooltipFormState extends State<TooltipForm> {
         ),
       ),
     );
+  }
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemp = XFile(image.path);
+      setState(() => this.image = imageTemp);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
   }
 }
