@@ -3,7 +3,10 @@ import 'package:plotline_task/src/services/tooltip/tooltip_border.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 
 class MyToolTip extends StatefulWidget {
-  const MyToolTip({super.key, required this.child, this.tooltipPosition=TooltipPosition.auto});
+  const MyToolTip(
+      {super.key,
+      required this.child,
+      this.tooltipPosition = TooltipPosition.auto});
 
   final Widget child;
   final TooltipPosition tooltipPosition;
@@ -12,9 +15,11 @@ class MyToolTip extends StatefulWidget {
 }
 
 class _MyToolTipState extends State<MyToolTip> {
- 
-   @override
-   void initState() {
+  double leftpos = 0;
+  double rightpos = 0;
+  double toppos = 0;
+  @override
+  void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => showOverlay());
   }
@@ -25,16 +30,23 @@ class _MyToolTipState extends State<MyToolTip> {
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
 
-    var leftpos = offset.dx - 125 + size.width / 2;
+    leftpos = offset.dx - 125 + size.width / 2;
 
-    var toppos = offset.dy + size.height;
-
+    toppos = offset.dy + size.height;
+    if (widget.tooltipPosition == TooltipPosition.top) {
+      setRelativePositionToTop(offset);
+    }
     final entry = OverlayEntry(
       builder: (context) {
         return Positioned(left: leftpos, top: toppos, child: buildOverlay());
       },
     );
     overlay.insert(entry);
+  }
+
+  void setRelativePositionToTop(Offset offset) {
+  
+    toppos = offset.dy-35;
   }
 
   Widget buildOverlay() {
@@ -46,12 +58,12 @@ class _MyToolTipState extends State<MyToolTip> {
         color: Colors.black,
         shape: TooltipBorder(
             renderBox: renderBox, tooltipPosition: widget.tooltipPosition),
-        shadows:const  [
+        shadows: const [
           BoxShadow(color: Colors.black, blurRadius: 4.0, offset: Offset(2, 2)),
         ],
       ),
       alignment: Alignment.centerRight,
-      padding:const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.only(right: 8),
       child: const Text(
         'Tooltip text goes here',
         style: TextStyle(
@@ -61,7 +73,8 @@ class _MyToolTipState extends State<MyToolTip> {
       ),
     );
   }
-@override
+
+  @override
   Widget build(BuildContext context) {
     return widget.child;
   }
