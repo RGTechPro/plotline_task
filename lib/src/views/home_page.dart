@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plotline_task/src/services/tooltip/my_tooltip.dart';
 import 'package:plotline_task/src/widgets/button.dart';
 
 class HomePage extends StatelessWidget {
@@ -18,21 +19,21 @@ class HomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyButton(text: 'Button 1', onPressed: () {}),
-                    MyButton(text: 'Button 2', onPressed: () {})
+                    MyToolTip(child: MyButton(text: 'Button 1', onPressed: () {})),
+                    MyToolTip(child: MyButton(text: 'Button 2', onPressed: () {}))
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    MyButton(text: 'Button 3', onPressed: () {}),
+                    MyToolTip(child: MyButton(text: 'Button 3', onPressed: () {})),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyButton(text: 'Button 4', onPressed: () {}),
-                    MyButton(text: 'Button 5', onPressed: () {})
+                    MyToolTip(child: MyButton(text: 'Button 4', onPressed: () {})),
+                    MyToolTip(child: MyButton(text: 'Button 5', onPressed: () {}))
                   ],
                 ),
               ]),
