@@ -2,18 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_border.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 
+import '../../models/tooltip_model.dart';
+
 class MyToolTip extends StatefulWidget {
-  const MyToolTip(
-      {super.key,
-      required this.child,
-      this.tooltipPosition = TooltipPosition.right,
-      required this.arrowHeight,
-      required this.arrowWidth});
+  const MyToolTip({
+    super.key,
+    required this.child,
+    this.tooltipPosition = TooltipPosition.bottom,
+  
+     this.tooltipProperty
+    //required this.refresh
+  });
 
   final Widget child;
   final TooltipPosition tooltipPosition;
-  final double arrowHeight;
-  final double arrowWidth;
+
+ final TooltipProperties? tooltipProperty;
+  // VoidCallback refresh;
   @override
   State<MyToolTip> createState() => _MyToolTipState();
 }
@@ -22,10 +27,24 @@ class _MyToolTipState extends State<MyToolTip> {
   double leftpos = 0;
   double rightpos = 0;
   double toppos = 0;
+  OverlayEntry? overlayEntry;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    removeOverlay();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => showOverlay());
+    refresh();
+  }
+
+  void refresh() {
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => showOverlay());
+    }
   }
 
   void showOverlay() {
@@ -57,7 +76,7 @@ class _MyToolTipState extends State<MyToolTip> {
     }
 
     TooltipPosition newTooltipPosition = readjust(offset, size);
-    final entry = OverlayEntry(
+    overlayEntry = OverlayEntry(
       builder: (context) {
         return Positioned(
             left: leftpos,
@@ -65,7 +84,7 @@ class _MyToolTipState extends State<MyToolTip> {
             child: buildOverlay(tooltipPosition: newTooltipPosition));
       },
     );
-    overlay.insert(entry);
+    overlay.insert(overlayEntry!);
   }
 
   TooltipPosition readjust(Offset offset, Size size) {
@@ -75,7 +94,6 @@ class _MyToolTipState extends State<MyToolTip> {
     double screenWidth = MediaQuery.of(context).size.width;
     //readjustment of top
     if (toppos < 0) {
-
       newTooltipPosition = TooltipPosition.bottom;
       setRelativePositionToBottom(offset, size);
     }
@@ -93,56 +111,65 @@ class _MyToolTipState extends State<MyToolTip> {
     if (leftpos < 0) {
       leftpos = 0;
     }
-    //
+
     return newTooltipPosition;
   }
 
   void setRelativePositionToTop(Offset offset) {
-    toppos = offset.dy - 35 - widget.arrowHeight;
+    toppos = offset.dy - 35 - widget.tooltipProperty!.arrowHeight;
   }
 
   void setRelativePositionToLeft(Offset offset) {
-    leftpos = offset.dx - 250-widget.arrowHeight;
-    rightpos = leftpos + 250+widget.arrowHeight;
+    leftpos = offset.dx - 250 - widget.tooltipProperty!.arrowHeight;
+    rightpos = leftpos + 250 + widget.tooltipProperty!.arrowHeight;
 
     toppos = offset.dy + 5;
   }
 
   void setRelativePositionToRight(Offset offset, Size size) {
-    leftpos = offset.dx + size.width+widget.arrowHeight;
-    toppos = offset.dy+5;
+    leftpos = offset.dx + size.width + widget.tooltipProperty!.arrowHeight;
+    toppos = offset.dy + 5;
   }
 
   void setRelativePositionToBottom(Offset offset, Size size) {
-    toppos = offset.dy + size.height + widget.arrowHeight;
+    toppos = offset.dy + size.height + widget.tooltipProperty!.arrowHeight;
+  }
+
+  void removeOverlay() {
+    overlayEntry!.remove();
   }
 
   Widget buildOverlay({required TooltipPosition tooltipPosition}) {
     final renderBox = context.findRenderObject() as RenderBox;
     return Material(
       color: Colors.transparent,
-      child: Container(
-        height: 35,
-        width: 250,
-        decoration: ShapeDecoration(
-          color: Colors.black,
-          shape: TooltipBorder(
-              renderBox: renderBox,
-              tooltipPosition: tooltipPosition,
-              arrowHeight: widget.arrowHeight,
-              arrowWidth: widget.arrowWidth),
-          shadows: const [
-            BoxShadow(
-                color: Colors.black, blurRadius: 2.0, offset: Offset(1, 1)),
-          ],
-        ),
-        // alignment: Alignment.centerRight,
-        padding: const EdgeInsets.all(4),
-        child: const Text(
-          'Tooltip text goes here',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.white, // Set the text color
+      child: GestureDetector(
+        onTap: () {
+          overlayEntry!.remove();
+        },
+        child: Container(
+          height: 35,
+          width: widget.tooltipProperty!.tooltipWidth,
+          decoration: ShapeDecoration(
+            color: Colors.black,
+            shape: TooltipBorder(
+                renderBox: renderBox,
+                tooltipPosition: tooltipPosition,
+                arrowHeight: widget.tooltipProperty!.arrowHeight,
+                arrowWidth: widget.tooltipProperty!.arrowWidth),
+            shadows: const [
+              BoxShadow(
+                  color: Colors.black, blurRadius: 2.0, offset: Offset(1, 1)),
+            ],
+          ),
+          // alignment: Alignment.centerRight,
+          padding:  EdgeInsets.all(widget.tooltipProperty!.padding),
+          child:  Text(
+           widget.tooltipProperty!.tooltipText,
+            style: TextStyle(
+              fontSize: widget.tooltipProperty!.textSize,
+              color: Colors.white, // Set the text color
+            ),
           ),
         ),
       ),
@@ -152,5 +179,11 @@ class _MyToolTipState extends State<MyToolTip> {
   @override
   Widget build(BuildContext context) {
     return widget.child;
+
+    // return Container(
+    //     child: MyButton(
+    //   text: "hi",
+    //   onPressed: refresh,
+    // ));
   }
 }

@@ -16,8 +16,8 @@ class TooltipBorder extends ShapeBorder {
   final double arrowHeight;
   Size? size;
   Offset? offset;
-  double? movedx;
-  double? movedy;
+  double? startX;
+  double? startY;
   double? relativex1;
   double? relativey1;
   double? relativex2;
@@ -60,7 +60,7 @@ class TooltipBorder extends ShapeBorder {
     rect = Rect.fromPoints(rect.topLeft, rect.bottomRight - const Offset(0, 0));
     return Path()
       ..addRRect(RRect.fromRectAndRadius(rect, const Radius.circular(8)))
-      ..moveTo(movedx!, movedy!)
+      ..moveTo(startX!, startY!)
       ..relativeLineTo(relativex1!, relativey1!)
       ..relativeLineTo(relativex2!, relativey2!)
       ..close();
@@ -73,8 +73,8 @@ class TooltipBorder extends ShapeBorder {
   ShapeBorder scale(double t) => this;
 
   void setRelativePositionToTop() {
-    movedx = offset!.dx + size!.width / 2 - arrowWidth/2;
-    movedy = offset!.dy-arrowHeight;
+    startX = offset!.dx + size!.width / 2 - arrowWidth/2;
+    startY = offset!.dy-arrowHeight;
     relativex1 = arrowWidth/2;
     relativex2 = arrowWidth/2;
     relativey1 = arrowHeight;
@@ -82,8 +82,8 @@ class TooltipBorder extends ShapeBorder {
   }
 
   void setRelativePositionToBottom() {
-    movedx = offset!.dx + size!.width / 2-arrowWidth/2;
-    movedy = size!.height + offset!.dy+arrowHeight;
+    startX = offset!.dx + size!.width / 2-arrowWidth/2;
+    startY = size!.height + offset!.dy+arrowHeight;
     relativex1 = arrowWidth/2;
     relativex2 = arrowWidth/2;
     relativey1 = -arrowHeight;
@@ -91,8 +91,8 @@ class TooltipBorder extends ShapeBorder {
   }
 
   void setRelativePositionToLeft() {
-    movedx = offset!.dx-arrowHeight;
-    movedy = offset!.dy + size!.height / 2 -arrowWidth/2;
+    startX = offset!.dx-arrowHeight;
+    startY = offset!.dy + size!.height / 2 -arrowWidth/2;
     relativex1 = arrowHeight;
     relativex2 = -arrowHeight;
     relativey1 = arrowWidth/2;
@@ -101,8 +101,8 @@ class TooltipBorder extends ShapeBorder {
 
   void setRelativePositionToRight() {
 
-    movedx = offset!.dx+size!.width+arrowHeight;
-    movedy = offset!.dy + size!.height / 2 -arrowWidth/2;
+    startX = offset!.dx+size!.width+arrowHeight;
+    startY = offset!.dy + size!.height / 2 -arrowWidth/2;
     relativex1 = -arrowHeight;
     relativex2 = arrowHeight;
     relativey1 = arrowWidth/2;

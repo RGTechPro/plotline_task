@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:plotline_task/src/models/tooltip_model.dart';
 import 'package:plotline_task/src/services/tooltip/my_tooltip.dart';
 import 'package:plotline_task/src/widgets/button.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+import '../services/tooltip/tooltip_position.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.tooltipProperty});
+  final TooltipProperties? tooltipProperty;
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  TooltipPosition bjkb = TooltipPosition.top;
+  List<TooltipProperties> tooltipProperties = [];
+  @override
+  void initState() {
+    tooltipProperties.add(widget.tooltipProperty!);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +35,43 @@ class HomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyToolTip(child: MyButton(text: 'Button 1', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,),
-                    MyToolTip(child: MyButton(text: 'Button 2', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,)
+                    
+                    MyToolTip(
+                      
+                        tooltipPosition: bjkb,
+                       tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
+                     //  tooltipProperty: tooltipProperties[0],
+                        child: MyButton(text: 'Button 1', onPressed: () {})),
+                    MyToolTip(
+                   
+                        tooltipPosition: bjkb,
+                                               // tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 2'),
+                        child: MyButton(text: 'Button 2', onPressed: () {}))
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    MyToolTip(child: MyButton(text: 'Button 3', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,),
+                    MyToolTip(
+          
+                        tooltipPosition: bjkb,
+                                             //   tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
+                        child: MyButton(text: 'Button 3', onPressed: () {})),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyToolTip(child: MyButton(text: 'Button 4', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,),
-                    MyToolTip(child: MyButton(text: 'Button 5', onPressed: () {}),arrowHeight: 10,arrowWidth: 20,)
+                    MyToolTip(
+                    
+                        tooltipPosition: bjkb,
+                                              //  tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
+                        child: MyButton(text: 'Button 4', onPressed: () {})),
+                    MyToolTip(
+                     
+                        tooltipPosition: bjkb,
+                                             //   tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
+                        child: MyButton(text: 'Button 5', onPressed: () {}))
                   ],
                 ),
               ]),
