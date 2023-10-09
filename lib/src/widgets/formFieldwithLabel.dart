@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plotline_task/src/constants.dart';
 
 class FormFieldWithLabel extends StatelessWidget {
   final String label;
@@ -22,25 +23,18 @@ class FormFieldWithLabel extends StatelessWidget {
     return Flexible(
       flex: 1,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               label,
-              style: TextStyle(
-                // You can replace this with your kFormLabelTextStyle
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: kFormLabelTextStyle
             ),
           ),
           DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              // Replace this with your kFromInputDecoration
-              hintText: 'Select an option',
-            ),
+            decoration: kFromInputDecoration,
             value: value,
             items: items.map((element) {
               return DropdownMenuItem<String>(

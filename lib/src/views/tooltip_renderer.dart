@@ -41,7 +41,13 @@ class _TooltipFormState extends State<TooltipForm> {
   Color textColor = Colors.white;
   Color backgroundColor = Colors.black;
   XFile? image;
-
+  List<String> buttons = [
+    'Button 1',
+    'Button 2',
+    'Button 3',
+    'Button 4',
+    'Button 5'
+  ];
   // List of selected properties that will be passed on to HomePage
   // Set to default properties in services/tooltip/default_properties.dart
   List<TooltipProperties> properties = defaultProperties;
@@ -62,9 +68,9 @@ class _TooltipFormState extends State<TooltipForm> {
   // Used to set the properties list to the controller values
   void setProperties() {
     // Mapping the current target element to an index
-    int idx = int.parse(targetElementController
-            .text[targetElementController.text.length - 1]) -
-        1;
+
+    int idx = buttons
+        .indexWhere((element) => element == targetElementController.text);
     // Setting the properties list to controller values of the target element
     properties[idx] = TooltipProperties(
       isHidden: false,
@@ -81,6 +87,7 @@ class _TooltipFormState extends State<TooltipForm> {
         arrowHeightController.text,
       ),
       tooltipPosition: tooltipPosition!,
+      image: image
     );
   }
 
@@ -99,19 +106,13 @@ class _TooltipFormState extends State<TooltipForm> {
                 // ---------- Target Element Selector ----------
                 FormFieldWithLabel(
                   label: 'Target Element',
-                  items: const [
-                    'Button 1',
-                    'Button 2',
-                    'Button 3',
-                    'Button 4',
-                    'Button 5'
-                  ],
+                  items: buttons,
                   value: targetElementController.text.isEmpty
                       ? null
                       : targetElementController.text,
                   onChanged: (value) {
                     setState(() {
-                      setProperties();
+                      //   setProperties();
                       targetElementController.text = value!;
                     });
                   },
@@ -125,6 +126,7 @@ class _TooltipFormState extends State<TooltipForm> {
                 TextFormWithLabel(
                   label: 'Tooltip Text',
                   controller: tooltipTextController,
+                  textInputType: TextInputType.text,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter tooltip text';
@@ -331,9 +333,9 @@ class _TooltipFormState extends State<TooltipForm> {
                           backgroundColor: const Color(0xFF0B58D9),
                         ),
                         onPressed: () {
-                          setProperties();
+                          
                           if (_formKey.currentState!.validate()) {
-                            if (mounted) {
+                            if (mounted) {setProperties();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

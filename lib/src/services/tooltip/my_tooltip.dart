@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_border.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
@@ -5,19 +7,13 @@ import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 import '../../models/tooltip_model.dart';
 
 class MyToolTip extends StatefulWidget {
-  const MyToolTip({
-    super.key,
-    required this.child,
-   
-  
-     this.tooltipProperty
-    //required this.refresh
-  });
+  const MyToolTip({super.key, required this.child, this.tooltipProperty
+      //required this.refresh
+      });
 
   final Widget child;
 
-
- final TooltipProperties? tooltipProperty;
+  final TooltipProperties? tooltipProperty;
   // VoidCallback refresh;
   @override
   State<MyToolTip> createState() => _MyToolTipState();
@@ -30,7 +26,6 @@ class _MyToolTipState extends State<MyToolTip> {
   OverlayEntry? overlayEntry;
   @override
   void dispose() {
-    // TODO: implement dispose
     removeOverlay();
     super.dispose();
   }
@@ -52,8 +47,9 @@ class _MyToolTipState extends State<MyToolTip> {
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
-    leftpos = offset.dx -  widget.tooltipProperty!.tooltipWidth/2 + size.width / 2;
-    rightpos = leftpos +  widget.tooltipProperty!.tooltipWidth;
+    leftpos =
+        offset.dx - widget.tooltipProperty!.tooltipWidth / 2 + size.width / 2;
+    rightpos = leftpos + widget.tooltipProperty!.tooltipWidth;
 
     switch (widget.tooltipProperty!.tooltipPosition) {
       case TooltipPosition.top:
@@ -74,7 +70,7 @@ class _MyToolTipState extends State<MyToolTip> {
       default:
         setRelativePositionToBottom(offset, size);
     }
-  
+
     TooltipPosition newTooltipPosition = readjust(offset, size);
     overlayEntry = OverlayEntry(
       builder: (context) {
@@ -84,11 +80,13 @@ class _MyToolTipState extends State<MyToolTip> {
             child: buildOverlay(tooltipPosition: newTooltipPosition));
       },
     );
-    if(widget.tooltipProperty?.isHidden == false) overlay.insert(overlayEntry!);
+    if (widget.tooltipProperty?.isHidden == false)
+      overlay.insert(overlayEntry!);
   }
 
   TooltipPosition readjust(Offset offset, Size size) {
-    TooltipPosition newTooltipPosition = widget.tooltipProperty!.tooltipPosition;
+    TooltipPosition newTooltipPosition =
+        widget.tooltipProperty!.tooltipPosition;
     //readjustment vertically
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
@@ -116,12 +114,16 @@ class _MyToolTipState extends State<MyToolTip> {
   }
 
   void setRelativePositionToTop(Offset offset) {
-    toppos = offset.dy - 35 - widget.tooltipProperty!.arrowHeight;
+    toppos = offset.dy - 135 - widget.tooltipProperty!.arrowHeight;
   }
 
   void setRelativePositionToLeft(Offset offset) {
-    leftpos = offset.dx - widget.tooltipProperty!.tooltipWidth - widget.tooltipProperty!.arrowHeight;
-    rightpos = leftpos +  widget.tooltipProperty!.tooltipWidth + widget.tooltipProperty!.arrowHeight;
+    leftpos = offset.dx -
+        widget.tooltipProperty!.tooltipWidth -
+        widget.tooltipProperty!.arrowHeight;
+    rightpos = leftpos +
+        widget.tooltipProperty!.tooltipWidth +
+        widget.tooltipProperty!.arrowHeight;
 
     toppos = offset.dy + 5;
   }
@@ -136,10 +138,15 @@ class _MyToolTipState extends State<MyToolTip> {
   }
 
   void removeOverlay() {
-    overlayEntry!.remove();
+    if (overlayEntry != null && overlayEntry!.mounted) {
+  overlayEntry?.remove();
+  overlayEntry = null;
+}
   }
 
   Widget buildOverlay({required TooltipPosition tooltipPosition}) {
+    // GlobalKey _keyRed = GlobalKey();
+
     final renderBox = context.findRenderObject() as RenderBox;
     return Material(
       color: Colors.transparent,
@@ -148,7 +155,6 @@ class _MyToolTipState extends State<MyToolTip> {
           overlayEntry!.remove();
         },
         child: Container(
-          height: 35,
           width: widget.tooltipProperty!.tooltipWidth,
           decoration: ShapeDecoration(
             color: widget.tooltipProperty!.backgroundColor,
@@ -163,13 +169,21 @@ class _MyToolTipState extends State<MyToolTip> {
             ],
           ),
           // alignment: Alignment.centerRight,
-          padding:  EdgeInsets.all(widget.tooltipProperty!.padding),
-          child:  Text(
-           widget.tooltipProperty!.tooltipText,
-            style: TextStyle(
-              fontSize: widget.tooltipProperty!.textSize,
-              color: widget.tooltipProperty!.textColor, // Set the text color
-            ),
+          padding: EdgeInsets.all(widget.tooltipProperty!.padding),
+          child: Column(
+            children: [
+              Text(
+                widget.tooltipProperty!.tooltipText,
+                style: TextStyle(
+                  fontSize: widget.tooltipProperty!.textSize,
+                  color:
+                      widget.tooltipProperty!.textColor, // Set the text color
+                ),
+              ),
+              (widget.tooltipProperty!.image != null)
+                  ? Image.file(File(widget.tooltipProperty!.image!.path))
+                  : const SizedBox()
+            ],
           ),
         ),
       ),
@@ -187,3 +201,4 @@ class _MyToolTipState extends State<MyToolTip> {
     // ));
   }
 }
+

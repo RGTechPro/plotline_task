@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plotline_task/src/constants.dart';
 
 import 'my_color_picker.dart';
 
@@ -24,10 +25,7 @@ class ColorPicker extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 16.0, // Adjust the font size as needed
-                fontWeight: FontWeight.bold, // Adjust the font weight as needed
-              ),
+              style: kFormLabelTextStyle
             ),
           ),
           Padding(
