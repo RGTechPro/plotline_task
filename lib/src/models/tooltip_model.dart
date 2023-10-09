@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 
 class TooltipProperties {
+  final bool isHidden;
   final String targetElement;
   final String tooltipText;
   final double textSize;
@@ -15,7 +16,8 @@ class TooltipProperties {
   final String? image;
   final TooltipPosition tooltipPosition;
   TooltipProperties(
-      {required this.targetElement,
+      {required this.isHidden,
+      required this.targetElement,
       required this.tooltipText,
       required this.textSize,
       required this.padding,

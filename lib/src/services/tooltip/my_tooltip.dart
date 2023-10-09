@@ -74,7 +74,7 @@ class _MyToolTipState extends State<MyToolTip> {
       default:
         setRelativePositionToBottom(offset, size);
     }
-
+  
     TooltipPosition newTooltipPosition = readjust(offset, size);
     overlayEntry = OverlayEntry(
       builder: (context) {
@@ -84,7 +84,7 @@ class _MyToolTipState extends State<MyToolTip> {
             child: buildOverlay(tooltipPosition: newTooltipPosition));
       },
     );
-    overlay.insert(overlayEntry!);
+    if(widget.tooltipProperty?.isHidden == false) overlay.insert(overlayEntry!);
   }
 
   TooltipPosition readjust(Offset offset, Size size) {

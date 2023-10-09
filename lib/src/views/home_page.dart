@@ -6,18 +6,19 @@ import 'package:plotline_task/src/widgets/button.dart';
 import '../services/tooltip/tooltip_position.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.tooltipProperty});
-  final TooltipProperties? tooltipProperty;
+  const HomePage({super.key, required this.tooltipProperties});
+  final List<TooltipProperties>? tooltipProperties;
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   TooltipPosition bjkb = TooltipPosition.top;
-  List<TooltipProperties> tooltipProperties = [];
+
   @override
   void initState() {
-    tooltipProperties.add(widget.tooltipProperty!);
+   
+    
     super.initState();
   }
 
@@ -35,17 +36,13 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    
                     MyToolTip(
-                      
-                      
-                       tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
-                     //  tooltipProperty: tooltipProperties[0],
+                        tooltipProperty: widget.tooltipProperties![0],
+                        
                         child: MyButton(text: 'Button 1', onPressed: () {})),
                     MyToolTip(
-                   
-                       
-                                               // tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 2'),
+                        tooltipProperty: widget.tooltipProperties![1],
+                        
                         child: MyButton(text: 'Button 2', onPressed: () {}))
                   ],
                 ),
@@ -53,9 +50,8 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     MyToolTip(
-          
+                        tooltipProperty: widget.tooltipProperties![2],
                        
-                                             //   tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
                         child: MyButton(text: 'Button 3', onPressed: () {})),
                   ],
                 ),
@@ -63,14 +59,12 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MyToolTip(
-                    
-                      
-                                              //  tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
+                        tooltipProperty: widget.tooltipProperties![3],
+
                         child: MyButton(text: 'Button 4', onPressed: () {})),
                     MyToolTip(
-                     
-                       
-                                             //   tooltipProperty: tooltipProperties.firstWhere((element) => element.targetElement=='Button 1'),
+                        tooltipProperty: widget.tooltipProperties![4],
+
                         child: MyButton(text: 'Button 5', onPressed: () {}))
                   ],
                 ),

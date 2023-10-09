@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plotline_task/src/constants.dart';
 import 'package:plotline_task/src/models/tooltip_model.dart';
+import 'package:plotline_task/src/services/tooltip/default_properties.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 import 'package:plotline_task/src/views/home_page.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../widgets/colorPicker.dart';
+import '../widgets/formFieldwithLabel.dart';
+import '../widgets/imagePicker.dart';
 import '../widgets/my_color_picker.dart';
+import '../widgets/textFormField.dart';
 
 class TooltipForm extends StatefulWidget {
   const TooltipForm({super.key});
@@ -17,8 +23,10 @@ class TooltipForm extends StatefulWidget {
 class _TooltipFormState extends State<TooltipForm> {
   final _formKey = GlobalKey<FormState>();
 
+  // Initial target element is 'Button 1'
   final targetElementController = TextEditingController(text: 'Button 1');
 
+  // Defining the controllers for the form fields
   final tooltipTextController = TextEditingController();
   final textSizeController = TextEditingController();
   final paddingController = TextEditingController();
@@ -26,11 +34,18 @@ class _TooltipFormState extends State<TooltipForm> {
   final tooltipWidthController = TextEditingController();
   final arrowWidthController = TextEditingController();
   final arrowHeightController = TextEditingController();
+  final tooltipPositionController = TextEditingController();
+
   TooltipPosition? tooltipPosition = TooltipPosition.auto;
   String selectedTooltipPosition = 'auto'; // Default position
   Color textColor = Colors.white;
   Color backgroundColor = Colors.black;
   XFile? image;
+
+  // List of selected properties that will be passed on to HomePage
+  // Set to default properties in services/tooltip/default_properties.dart
+  List<TooltipProperties> properties = defaultProperties;
+
   @override
   void dispose() {
     targetElementController.dispose();
@@ -42,6 +57,31 @@ class _TooltipFormState extends State<TooltipForm> {
     arrowWidthController.dispose();
     arrowHeightController.dispose();
     super.dispose();
+  }
+
+  // Used to set the properties list to the controller values
+  void setProperties() {
+    // Mapping the current target element to an index
+    int idx = int.parse(targetElementController
+            .text[targetElementController.text.length - 1]) -
+        1;
+    // Setting the properties list to controller values of the target element
+    properties[idx] = TooltipProperties(
+      isHidden: false,
+      targetElement: targetElementController.text,
+      tooltipText: tooltipTextController.text,
+      textSize: double.parse(textSizeController.text),
+      padding: double.parse(paddingController.text),
+      textColor: textColor,
+      backgroundColor: backgroundColor,
+      cornerRadius: double.parse(cornerRadiusController.text),
+      tooltipWidth: double.parse(tooltipWidthController.text),
+      arrowWidth: double.parse(arrowHeightController.text),
+      arrowHeight: double.parse(
+        arrowHeightController.text,
+      ),
+      tooltipPosition: tooltipPosition!,
+    );
   }
 
   @override
@@ -56,47 +96,35 @@ class _TooltipFormState extends State<TooltipForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'Target Element',
-                    style: kFormLabelTextStyle,
-                  ),
-                ),
-
-                DropdownButtonFormField<String>(
-                  decoration: kFromInputDecoration,
-                  value: targetElementController.text.isEmpty
-                      ? null
-                      : targetElementController.text,
-                  items: [
+                // ---------- Target Element Selector ----------
+                FormFieldWithLabel(
+                  label: 'Target Element',
+                  items: const [
                     'Button 1',
                     'Button 2',
                     'Button 3',
                     'Button 4',
                     'Button 5'
-                  ].map((element) {
-                    return DropdownMenuItem<String>(
-                      value: element,
-                      child: Text(element),
-                    );
-                  }).toList(),
+                  ],
+                  value: targetElementController.text.isEmpty
+                      ? null
+                      : targetElementController.text,
                   onChanged: (value) {
                     setState(() {
+                      setProperties();
                       targetElementController.text = value!;
                     });
                   },
+                  controller: targetElementController,
+                  onTap: () {
+                    // Optional onTap handler
+                  },
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'Tooltip Text',
-                    style: kFormLabelTextStyle,
-                  ),
-                ),
-                TextFormField(
+
+                // ---------- Text to be displayed in the tooltip ----------
+                TextFormWithLabel(
+                  label: 'Tooltip Text',
                   controller: tooltipTextController,
-                  decoration: kFromInputDecoration,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter tooltip text';
@@ -104,6 +132,7 @@ class _TooltipFormState extends State<TooltipForm> {
                     return null;
                   },
                 ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -112,17 +141,10 @@ class _TooltipFormState extends State<TooltipForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Text Size',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          TextFormField(
+                          // ---------- Text Size ----------
+                          TextFormWithLabel(
+                            label: 'Text Size',
                             controller: textSizeController,
-                            decoration: kFromInputDecoration,
-                            keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter text size';
@@ -139,17 +161,10 @@ class _TooltipFormState extends State<TooltipForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Padding',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          TextFormField(
+                          // ---------- Box Padding ----------
+                          TextFormWithLabel(
+                            label: 'Padding',
                             controller: paddingController,
-                            decoration: kFromInputDecoration,
-                            keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter padding';
@@ -170,17 +185,10 @@ class _TooltipFormState extends State<TooltipForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Corner Radius',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          TextFormField(
+                          // ---------- Corner Radius ----------
+                          TextFormWithLabel(
+                            label: 'Corner Radius',
                             controller: cornerRadiusController,
-                            decoration: kFromInputDecoration,
-                            keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter corner radius';
@@ -197,17 +205,10 @@ class _TooltipFormState extends State<TooltipForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Tooltip Width',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          TextFormField(
+                          // ---------- Tooltip Width ----------
+                          TextFormWithLabel(
+                            label: 'Tooltip Width',
                             controller: tooltipWidthController,
-                            decoration: kFromInputDecoration,
-                            keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter tooltip width';
@@ -228,17 +229,10 @@ class _TooltipFormState extends State<TooltipForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Arrow Width',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          TextFormField(
+                          // ---------- Arrow Width ----------
+                          TextFormWithLabel(
+                            label: 'Arrow Width',
                             controller: arrowWidthController,
-                            decoration: kFromInputDecoration,
-                            keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter arrow width';
@@ -255,17 +249,10 @@ class _TooltipFormState extends State<TooltipForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Arrow Height',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          TextFormField(
+                          // ---------- Arrow Height ----------
+                          TextFormWithLabel(
+                            label: 'Arrow Height',
                             controller: arrowHeightController,
-                            decoration: kFromInputDecoration,
-                            keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter arrow height';
@@ -280,79 +267,25 @@ class _TooltipFormState extends State<TooltipForm> {
                 ),
                 Row(
                   children: [
-                    Flexible(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Text Color',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: MyColorPicker(
-                                onSelectColor: (value) {
-                                  setState(() {
-                                    textColor = value;
-                                  });
-                                },
-                                availableColors: const [
-                                  Colors.white,
-                                  Colors.black,
-                                  Colors.blue,
-                                  Colors.green,
-                                  Colors.greenAccent,
-                                  Colors.yellow,
-                                  Colors.orange,
-                                  Colors.red,
-                                  Colors.purple,
-                                  Colors.grey,
-                                ],
-                                initialColor: Colors.white),
-                          ),
-                        ],
-                      ),
+                    // ---------- Text Color Selector ----------
+                    ColorPicker(
+                      label: 'Text Color',
+                      initialColor: textColor,
+                      onSelectColor: (value) {
+                        setState(() {
+                          textColor = value;
+                        });
+                      },
                     ),
-                    Flexible(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Background Color',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: MyColorPicker(
-                                onSelectColor: (value) {
-                                  setState(() {
-                                    backgroundColor = value;
-                                  });
-                                },
-                                availableColors: const [
-                                  Colors.black,
-                                  Colors.white,
-                                  Colors.blue,
-                                  Colors.green,
-                                  Colors.greenAccent,
-                                  Colors.yellow,
-                                  Colors.orange,
-                                  Colors.red,
-                                  Colors.purple,
-                                  Colors.grey,
-                                ],
-                                initialColor: Colors.black),
-                          ),
-                        ],
-                      ),
+                    // ---------- Background Color Selector ----------
+                    ColorPicker(
+                      label: 'Background Color',
+                      initialColor: backgroundColor,
+                      onSelectColor: (value) {
+                        setState(() {
+                          backgroundColor = value;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -360,73 +293,30 @@ class _TooltipFormState extends State<TooltipForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Flexible(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Tooltip Position',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          DropdownButtonFormField<String>(
-                            decoration: kFromInputDecoration,
-                            value: selectedTooltipPosition,
-                            items: ['top', 'bottom', 'right', 'left', 'auto']
-                                .map((position) {
-                              return DropdownMenuItem<String>(
-                                value: position,
-                                child: Text(position),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedTooltipPosition = value!;
-                               tooltipPosition = TooltipPosition.values
-                                    .firstWhere(
-                                        (e) => e.name == selectedTooltipPosition);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
+                    // ---------- Position Selector ----------
+                    FormFieldWithLabel(
+                      label: 'Tooltip Position',
+                      value: selectedTooltipPosition,
+                      items: ['top', 'bottom', 'right', 'left', 'auto'],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedTooltipPosition = value!;
+                          tooltipPosition = TooltipPosition.values.firstWhere(
+                              (e) => e.name == selectedTooltipPosition);
+                        });
+                      },
+                      controller: tooltipPositionController,
                     ),
-                    Flexible(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              'Select image',
-                              style: kFormLabelTextStyle,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              await pickImage();
-                            },
-                            child: Container(
-                              height: 45,
-                              width: 180,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0xffD9D9D9)),
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Icon(Icons.image),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    // ---------- Image Picker ----------
+                    ImagePickerWidget(
+                      onTap: () async {
+                        await pickImage();
+                      },
+                    )
                   ],
                 ),
 
-                // Add Tooltip Image Input here
+                // ---------- Add Tooltip Image Input Here ----------
                 const SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -436,44 +326,22 @@ class _TooltipFormState extends State<TooltipForm> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8))),
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                          ),
                           backgroundColor: const Color(0xFF0B58D9),
                         ),
                         onPressed: () {
+                          setProperties();
                           if (_formKey.currentState!.validate()) {
                             if (mounted) {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage(
-                                            tooltipProperty: TooltipProperties(
-                                                targetElement:
-                                                    targetElementController
-                                                        .text,
-                                                tooltipText:
-                                                    tooltipTextController.text,
-                                                textSize: double.parse(
-                                                    textSizeController.text),
-                                                padding: double.parse(
-                                                    paddingController.text),
-                                                textColor: textColor,
-                                                backgroundColor:
-                                                    backgroundColor,
-                                                cornerRadius: double.parse(
-                                                    cornerRadiusController
-                                                        .text),
-                                                tooltipWidth: double.parse(
-                                                    tooltipWidthController
-                                                        .text),
-                                                arrowWidth: double.parse(
-                                                    arrowHeightController.text),
-                                                arrowHeight: double.parse(
-                                                  arrowHeightController.text,
-                                                ),
-                                                tooltipPosition:
-                                                    tooltipPosition!),
-                                          )));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                    tooltipProperties: properties,
+                                  ),
+                                ),
+                              );
                             }
                           }
                         },
@@ -495,7 +363,9 @@ class _TooltipFormState extends State<TooltipForm> {
 
   Future pickImage() async {
     try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      );
       if (image == null) return;
       final imageTemp = XFile(image.path);
       setState(() => this.image = imageTemp);
