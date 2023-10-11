@@ -100,8 +100,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         byteImage = Uint8List.fromList(File(image.path).readAsBytesSync());
       });
       var decodedImage = await decodeImageFromList(byteImage!);
-      print(decodedImage.width);
-      print(decodedImage.height);
+
       aspectRatio = decodedImage.width / decodedImage.height;
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');

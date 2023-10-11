@@ -18,7 +18,7 @@ class TooltipProperties {
   final Uint8List? image;
   final TooltipPosition tooltipPosition;
   final double? tootltipHeight;
-  final double aspectRatio;
+  final double? aspectRatio;
   TooltipProperties(
       {required this.isHidden,
       required this.targetElement,
@@ -34,5 +34,5 @@ class TooltipProperties {
       required this.tooltipPosition,
       this.image,
       this.tootltipHeight,
-      required this.aspectRatio});
+       this.aspectRatio});
 }

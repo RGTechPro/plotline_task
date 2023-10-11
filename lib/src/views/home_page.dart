@@ -68,21 +68,7 @@ class HomePage extends StatelessWidget {
                             })),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    MyButton(
-                        text: 'Button 3',
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const TooltipForm(
-                                        buttonText: 'Button hsdgfhjs',
-                                      )));
-                        }),
-                  ],
-                ),
+              
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

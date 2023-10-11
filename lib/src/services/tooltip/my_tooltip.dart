@@ -6,22 +6,20 @@ import '../../models/tooltip_model.dart';
 
 class MyToolTip extends StatefulWidget {
   const MyToolTip({super.key, required this.child, this.tooltipProperty
-      //required this.refresh
       });
 
   final Widget child;
 
   final TooltipProperties? tooltipProperty;
-  // VoidCallback refresh;
   @override
   State<MyToolTip> createState() => _MyToolTipState();
 }
 
 class _MyToolTipState extends State<MyToolTip> {
-  double? leftpos;
-  double? rightpos;
-  double? toppos;
-  double? bottompos;
+  double? leftPosition;
+  double? rightPosition;
+  double? topPosition;
+  double? bottomPosition;
   OverlayEntry? overlayEntry;
   OverlayEntry? dummyOverlayEntry;
   GlobalKey tooltipKey = GlobalKey();
@@ -50,141 +48,127 @@ class _MyToolTipState extends State<MyToolTip> {
         tooltipKey.currentContext?.findRenderObject() as RenderBox;
     // await Future.delayed(const Duration(milliseconds: 100));
     final tooltipSize = renderBox.size;
-    print("height");
-    print(tooltipSize.height);
+
     overlayEntry?.remove();
     // setRelativePositionToTop(offset!, buttonSize!);
-    print("old values");
-    print(toppos);
-    print(bottompos);
-    print(leftpos);
-    print(rightpos);
-    print("........");
+
     /////////////////////////
     // Boundary Checks//
 
-    if (leftpos == null) {
-      leftpos = screenWidth! - rightpos! - tooltipSize.width;
+    if (leftPosition == null) {
+      leftPosition = screenWidth! - rightPosition! - tooltipSize.width;
     } else {
-      rightpos = screenWidth! - leftpos! - tooltipSize.width;
+      rightPosition = screenWidth! - leftPosition! - tooltipSize.width;
     }
     //redo again
-    if (toppos == null) {
-      toppos = screenHeight! -
-          bottompos! -
-          tooltipSize.width / widget.tooltipProperty!.aspectRatio;
+    if (topPosition == null) {
+      topPosition = screenHeight! -
+          bottomPosition! -
+          tooltipSize.width / widget.tooltipProperty!.aspectRatio!;
     } else {
-      bottompos = screenHeight! -
-          toppos! -
-          tooltipSize.width / widget.tooltipProperty!.aspectRatio;
+      bottomPosition = screenHeight! -
+          topPosition! -
+          tooltipSize.width / widget.tooltipProperty!.aspectRatio!;
     }
-    print(screenHeight);
-    print(screenWidth);
-    print(toppos);
-    print(bottompos);
-    print(leftpos);
-    print(rightpos);
+
     //////////////////////////
     switch (widget.tooltipProperty!.tooltipPosition) {
       case TooltipPosition.top:
         //if the tooltip overflows from top then set its position to bottom
-        if (toppos! < 0) {
+        if (topPosition! < 0) {
           setRelativePositionToBottom(offset!, buttonSize!);
-          newTop = toppos;
+          newTop = topPosition;
         }
         //if it overflows from left then shift the tooltip a bit to right
-        if (leftpos! < 0) newLeft = 0;
+        if (leftPosition! < 0) newLeft = 0;
         //if it overflows from right then shift the tooltip a bit to left
-        if (rightpos! < 0) newRight = 0;
+        if (rightPosition! < 0) newRight = 0;
 
         //check if both left and right are null then set either
-        if (newLeft == null && newRight == null) newLeft = leftpos!;
+        if (newLeft == null && newRight == null) newLeft = leftPosition!;
         //check if both top and bottom are null then set either
-        if (newBottom == null && newTop == null) newBottom = bottompos!;
+        if (newBottom == null && newTop == null) newBottom = bottomPosition!;
         break;
 
       case TooltipPosition.left:
-        // setRelativePositionToRight(offset!, buttonSize!);
-        // bool rightPossible = (leftpos! + tooltipSize.width < screenWidth!);
-        // setRelativePositionToLeft(offset!, buttonSize!);
-        
+  
 
-        if (leftpos! < 0) {
+        if (leftPosition! < 0) {
           setRelativePositionToRight(offset!, buttonSize!);
           
 
-          if (leftpos! + tooltipSize.width > screenWidth!) {
+          if (leftPosition! + tooltipSize.width > screenWidth!) {
             setRelativePositionToLeft(offset!, buttonSize!);
-            newRight = rightpos;
+            newRight = rightPosition;
           }
           else{
-            newLeft = leftpos;
+            newLeft = leftPosition;
           }
         }
 
         //if it overflows from left then shift the tooltip a bit to right
-        if (bottompos! < 0) newBottom = 0;
+        if (bottomPosition! < 0) newBottom = 0;
         //if it overflows from right then shift the tooltip a bit to left
-        if (toppos! < 0) newTop = 0;
+        if (topPosition! < 0) newTop = 0;
 
         //check if both left and right are null then set either
-        if (newLeft == null && newRight == null) newRight = rightpos!;
+        if (newLeft == null && newRight == null) newRight = rightPosition!;
         //check if both top and bottom are null then set either
-        if (newBottom == null && newTop == null) newTop = toppos!;
+        if (newBottom == null && newTop == null) newTop = topPosition!;
         break;
 
       case TooltipPosition.right:
-        if (rightpos! < 0) {
+        if (rightPosition! < 0) {
           setRelativePositionToLeft(offset!, buttonSize!);
-          if (rightpos! + tooltipSize.width > screenWidth!) {
+          if (rightPosition! + tooltipSize.width > screenWidth!) {
             setRelativePositionToRight(offset!, buttonSize!);
-            newLeft = leftpos;
+            newLeft = leftPosition;
           }
           else{
-            newRight = rightpos;
+            newRight = rightPosition;
           }
         }
         
         //if it overflows from left then shift the tooltip a bit to right
-        if (bottompos! < 0) newBottom = 0;
+        if (bottomPosition! < 0) newBottom = 0;
         //if it overflows from right then shift the tooltip a bit to left
-        if (toppos! < 0) newTop = 0;
+        if (topPosition! < 0) newTop = 0;
 
         //check if both left and right are null then set either
-        if (newLeft == null && newRight == null) newLeft = leftpos!;
+        if (newLeft == null && newRight == null) newLeft = leftPosition!;
         //check if both top and bottom are null then set either
-        if (newBottom == null && newTop == null) newTop = toppos!;
+        if (newBottom == null && newTop == null) newTop = topPosition!;
 
         break;
       case TooltipPosition.bottom:
-        if (bottompos! < 0) {
+        if (bottomPosition! < 0) {
           setRelativePositionToTop(offset!, buttonSize!);
-          newBottom = bottompos;
+          newBottom = bottomPosition;
         }
         //if it overflows from left then shift the tooltip a bit to right
-        if (leftpos! < 0) newLeft = 0;
+        if (leftPosition! < 0) newLeft = 0;
         //if it overflows from right then shift the tooltip a bit to left
-        if (rightpos! < 0) newRight = 0;
+        if (rightPosition! < 0) newRight = 0;
 
         //check if both left and right are null then set either
-        if (newLeft == null && newRight == null) newLeft = leftpos!;
+        if (newLeft == null && newRight == null) newLeft = leftPosition!;
         //check if both top and bottom are null then set either
-        if (newBottom == null && newTop == null) newTop = toppos!;
+        if (newBottom == null && newTop == null) newTop = topPosition!;
         break;
       case TooltipPosition.auto:
-        if (bottompos! < 0) {
+        if (bottomPosition! < 0) {
           setRelativePositionToTop(offset!, buttonSize!);
-          newBottom = bottompos;
+          newBottom = bottomPosition;
         }
         //if it overflows from left then shift the tooltip a bit to right
-        if (leftpos! < 0) newLeft = 0;
+        if (leftPosition! < 0) newLeft = 0;
         //if it overflows from right then shift the tooltip a bit to left
-        if (rightpos! < 0) newRight = 0;
+        if (rightPosition! < 0) newRight = 0;
 
         //check if both left and right are null then set either
-        if (newLeft == null && newRight == null) newLeft = leftpos!;
+        if (newLeft == null && newRight == null) newLeft = leftPosition!;
         //check if both top and bottom are null then set either
-        if (newBottom == null && newTop == null) newTop = toppos!;
+        if (newBottom == null && newTop == null) newTop = topPosition!;
         break;
     }
     //////////////////////////
@@ -226,10 +210,7 @@ class _MyToolTipState extends State<MyToolTip> {
     final renderBox = context.findRenderObject() as RenderBox;
     buttonSize = renderBox.size;
     offset = renderBox.localToGlobal(Offset.zero);
-    // leftpos =
-    //     offset.dx - widget.tooltipProperty!.tooltipWidth / 2 + size.width / 2;
-    // rightpos = leftpos! + widget.tooltipProperty!.tooltipWidth;
-    //func above
+
     switch (widget.tooltipProperty!.tooltipPosition) {
       case TooltipPosition.top:
         setRelativePositionToTop(offset!, buttonSize!);
@@ -259,10 +240,10 @@ class _MyToolTipState extends State<MyToolTip> {
     overlayEntry = OverlayEntry(
       builder: (context) {
         return Positioned(
-            left: leftpos,
-            right: rightpos,
-            top: toppos,
-            bottom: bottompos,
+            left: leftPosition,
+            right: rightPosition,
+            top: topPosition,
+            bottom: bottomPosition,
             child: buildOverlay(tooltipPosition: newTooltipPosition!));
       },
     );
@@ -274,66 +255,54 @@ class _MyToolTipState extends State<MyToolTip> {
   TooltipPosition readjust(Offset offset, Size size) {
     TooltipPosition newTooltipPosition =
         widget.tooltipProperty!.tooltipPosition;
-    // final renderBox = tooltipKey.currentContext!.findRenderObject() as RenderBox;
-    // final size = renderBox.size;
-    // print(size);
-//     //readjustment vertically
-//     double screenHeight = MediaQuery.of(context).size.height;
-//     double screenWidth = MediaQuery.of(context).size.width;
-//     //readjustment of top
-//     if (toppos !< 0) {
-//       newTooltipPosition = TooltipPosition.bottom;
-//       setRelativePositionToBottom(offset, size);
-//     }
-//     //readjustment of bottom
-//     if (screenHeight - toppos! < 35) {
-//       newTooltipPosition = TooltipPosition.top;
-//       setRelativePositionToTop(offset,size);
-//     }
-//     ///////
-
-// //readjustment horizontally
-//     if (rightpos! > screenWidth) {
-//       leftpos = leftpos! - (rightpos! - screenWidth);
-//     }
-//     if (leftpos! < 0) {
-//       leftpos = 0;
-//     }
 
     return newTooltipPosition;
   }
 
+   // Function to set relative position of the tooltip to the top of the target widget
   void setRelativePositionToTop(Offset offset, Size size) {
-    // toppos = offset.dy - 135 - widget.tooltipProperty!.arrowHeight;
     newTooltipPosition = TooltipPosition.top;
     double screenHeight = MediaQuery.of(context).size.height;
-    leftpos =
-        offset.dx - widget.tooltipProperty!.tooltipWidth / 2 + size.width / 2;
-    bottompos = screenHeight - offset.dy + widget.tooltipProperty!.arrowHeight;
+    
+    // Calculate the left position to center the tooltip horizontally
+    leftPosition = offset.dx - widget.tooltipProperty!.tooltipWidth / 2 + size.width / 2;
+    
+    // Calculate the bottom position with extra height for the tooltip's arrow
+    bottomPosition = screenHeight - offset.dy + widget.tooltipProperty!.arrowHeight;
   }
 
+  // Function to set relative position of the tooltip to the left of the target widget
   void setRelativePositionToLeft(Offset offset, Size size) {
-    // leftpos = offset.dx -
-    //     widget.tooltipProperty!.tooltipWidth -
-    //     widget.tooltipProperty!.arrowHeight;
     newTooltipPosition = TooltipPosition.left;
     double screenWidth = MediaQuery.of(context).size.width;
-    rightpos = screenWidth - offset.dx + widget.tooltipProperty!.arrowHeight;
+    
+    // Calculate the right position with extra width for the tooltip's arrow
+    rightPosition = screenWidth - offset.dx + widget.tooltipProperty!.arrowHeight;
 
-    toppos = offset.dy + 5;
+    // Calculate the top position, adding a margin from the top
+    topPosition = offset.dy + 5;
   }
 
+  // Function to set relative position of the tooltip to the right of the target widget
   void setRelativePositionToRight(Offset offset, Size size) {
     newTooltipPosition = TooltipPosition.right;
-    leftpos = offset.dx + size.width + widget.tooltipProperty!.arrowHeight;
-    toppos = offset.dy + 5;
+    
+    // Calculate the left position with extra width for the tooltip's arrow
+    leftPosition = offset.dx + size.width + widget.tooltipProperty!.arrowHeight;
+    
+    // Calculate the top position, adding a margin from the top
+    topPosition = offset.dy + 5;
   }
 
+  // Function to set relative position of the tooltip to the bottom of the target widget
   void setRelativePositionToBottom(Offset offset, Size size) {
     newTooltipPosition = TooltipPosition.bottom;
-    leftpos =
-        offset.dx - widget.tooltipProperty!.tooltipWidth / 2 + size.width / 2;
-    toppos = offset.dy + size.height + widget.tooltipProperty!.arrowHeight;
+    
+    // Calculate the left position to center the tooltip horizontally
+    leftPosition = offset.dx - widget.tooltipProperty!.tooltipWidth / 2 + size.width / 2;
+    
+    // Calculate the top position, adding the widget's height and an extra height for the tooltip's arrow
+    topPosition = offset.dy + size.height + widget.tooltipProperty!.arrowHeight;
   }
 
   void removeOverlay() {
@@ -388,16 +357,7 @@ class _MyToolTipState extends State<MyToolTip> {
       ),
     );
 
-    // return Container(
-    //   width: MediaQuery.of(context).size.width,
-    //   child: CustomSingleChildLayout(
-    //       delegate: _TooltipPositionDelegate(
-    //         target: Offset(10, 10),
-    //         verticalOffset: 10,
-    //         preferBelow: true,
-    //       ),
-    //       child: tooltipContent),
-    // );
+
     return TooltipBox(
         readjust2: readjust2, tooltipContent: tooltipContent, key: tooltipKey);
   }

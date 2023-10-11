@@ -19,27 +19,40 @@ class TooltipForm extends StatefulWidget {
 
 class _TooltipFormState extends State<TooltipForm> {
   final _formKey = GlobalKey<FormState>();
-
+  // List of selected properties that will be passed on to HomePage
+  // Set to default properties in services/tooltip/default_properties.dart
+  List<TooltipProperties> properties = defaultProperties;
+  int idx = 0;
   // Initial target element is 'Button 1'
-  final targetElementController = TextEditingController();
+  final targetElementController =
+      TextEditingController(text: defaultProperties[0].targetElement);
 
   // Defining the controllers for the form fields
-  final tooltipTextController = TextEditingController();
-  final textSizeController = TextEditingController();
-  final paddingController = TextEditingController();
-  final cornerRadiusController = TextEditingController();
-  final tooltipWidthController = TextEditingController();
-  final arrowWidthController = TextEditingController();
-  final arrowHeightController = TextEditingController();
-  final tooltipPositionController = TextEditingController();
+  final tooltipTextController =
+      TextEditingController(text: defaultProperties[0].tooltipText);
+  final textSizeController =
+      TextEditingController(text: defaultProperties[0].textSize.toString());
+  final paddingController =
+      TextEditingController(text: defaultProperties[0].padding.toString());
+  final cornerRadiusController =
+      TextEditingController(text: defaultProperties[0].cornerRadius.toString());
+  final tooltipWidthController =
+      TextEditingController(text: defaultProperties[0].tooltipWidth.toString());
+  final arrowWidthController =
+      TextEditingController(text: defaultProperties[0].arrowWidth.toString());
+  final arrowHeightController =
+      TextEditingController(text: defaultProperties[0].arrowHeight.toString());
+  final tooltipPositionController =
+      TextEditingController(text: defaultProperties[0].tooltipPosition.name);
 
   TooltipPosition? tooltipPosition = TooltipPosition.auto;
   String selectedTooltipPosition = 'auto'; // Default position
   Color textColor = Colors.white; // write initial
   Color backgroundColor = Colors.black;
   Uint8List? image;
-  String? fileName;
-  double? aspectRatio;
+
+  double aspectRatio = 1;
+
   List<String> buttons = [
     'Button 1',
     'Button 2',
@@ -47,9 +60,6 @@ class _TooltipFormState extends State<TooltipForm> {
     'Button 4',
     'Button 5'
   ];
-  // List of selected properties that will be passed on to HomePage
-  // Set to default properties in services/tooltip/default_properties.dart
-  List<TooltipProperties> properties = defaultProperties;
 
   @override
   void dispose() {
@@ -74,10 +84,10 @@ class _TooltipFormState extends State<TooltipForm> {
   void setProperties() {
     // Mapping the current target element to an index
 
-    int idx = buttons
+    idx = buttons
         .indexWhere((element) => element == targetElementController.text);
     // Setting the properties list to controller values of the target element
-    properties[idx] = TooltipProperties(
+    properties[idx!] = TooltipProperties(
         isHidden: false,
         targetElement: targetElementController.text,
         tooltipText: tooltipTextController.text,
@@ -119,18 +129,40 @@ class _TooltipFormState extends State<TooltipForm> {
                       : targetElementController.text,
                   onChanged: (value) {
                     //   setProperties();
-                    targetElementController.text = value!;
+                    setState(() {
+                      idx = buttons.indexWhere((element) => element == value);
+                      targetElementController.text = value!;
+                      tooltipTextController.text = properties[idx].tooltipText;
+                      textSizeController.text =
+                          properties[idx].textSize.toString();
+                      paddingController.text =
+                          properties[idx].padding.toString();
+                      cornerRadiusController.text =
+                          properties[idx].cornerRadius.toString();
+                      tooltipWidthController.text =
+                          properties[idx].tooltipWidth.toString();
+                      arrowWidthController.text =
+                          properties[idx].arrowWidth.toString();
+                      arrowHeightController.text =
+                          properties[idx].arrowHeight.toString();
+                      tooltipPositionController.text =
+                          properties[idx].tooltipPosition.name;
+                      image = properties[idx].image;
+                      selectedTooltipPosition =
+                          properties[idx].tooltipPosition.name;
+                      textColor = properties[idx].textColor;
+                      backgroundColor = properties[idx].backgroundColor;
+                    });
                   },
                   controller: targetElementController,
-                  onTap: () {
-                    // remoove this
-                    // Optional onTap handler
-                  },
                 ),
 
                 // ---------- Text to be displayed in the tooltip ----------
                 TextFormWithLabel(
                   label: 'Tooltip Text',
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'.'))
+                  ],
                   controller: tooltipTextController,
                   textInputType: TextInputType.text,
                   validator: (value) {
@@ -152,6 +184,10 @@ class _TooltipFormState extends State<TooltipForm> {
                           // ---------- Text Size ----------
                           TextFormWithLabel(
                             label: 'Text Size',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'^\d+\.?\d*')), // Use regex to allow only numbers and a decimal point
+                            ],
                             controller: textSizeController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -171,6 +207,10 @@ class _TooltipFormState extends State<TooltipForm> {
                         children: [
                           // ---------- Box Padding ----------
                           TextFormWithLabel(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'^\d+\.?\d*')), // Use regex to allow only numbers and a decimal point
+                            ],
                             label: 'Padding',
                             controller: paddingController,
                             validator: (value) {
@@ -196,6 +236,10 @@ class _TooltipFormState extends State<TooltipForm> {
                           // ---------- Corner Radius ----------
                           TextFormWithLabel(
                             label: 'Corner Radius',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'^\d+\.?\d*')), // Use regex to allow only numbers and a decimal point
+                            ],
                             controller: cornerRadiusController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -216,6 +260,10 @@ class _TooltipFormState extends State<TooltipForm> {
                           // ---------- Tooltip Width ----------
                           TextFormWithLabel(
                             label: 'Tooltip Width',
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'^\d+\.?\d*')), // Use regex to allow only numbers and a decimal point
+                            ],
                             controller: tooltipWidthController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -239,6 +287,10 @@ class _TooltipFormState extends State<TooltipForm> {
                         children: [
                           // ---------- Arrow Width ----------
                           TextFormWithLabel(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'^\d+\.?\d*')), // Use regex to allow only numbers and a decimal point
+                            ],
                             label: 'Arrow Width',
                             controller: arrowWidthController,
                             validator: (value) {
@@ -259,6 +311,10 @@ class _TooltipFormState extends State<TooltipForm> {
                         children: [
                           // ---------- Arrow Height ----------
                           TextFormWithLabel(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r'^\d+\.?\d*')), // Use regex to allow only numbers and a decimal point
+                            ],
                             label: 'Arrow Height',
                             controller: arrowHeightController,
                             validator: (value) {
