@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
+import 'package:plotline_task/src/services/tooltip/tooltipPosition.dart';
+
 
 class TooltipBorder extends ShapeBorder {
   TooltipBorder(

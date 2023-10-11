@@ -9,7 +9,8 @@ import '../constants.dart';
 class ImagePickerWidget extends StatefulWidget {
   final ValueSetter<Uint8List?> onTap;
   final ValueSetter<double> aspectRatio;
-  const ImagePickerWidget({super.key, required this.onTap, required this.aspectRatio});
+  const ImagePickerWidget(
+      {super.key, required this.onTap, required this.aspectRatio});
 
   @override
   State<ImagePickerWidget> createState() => _ImagePickerWidgetState();
@@ -73,6 +74,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                                       fileName = null;
                                       image = null;
                                       widget.onTap(null);
+                                      widget.aspectRatio(double.infinity);
                                     });
                                   },
                                   icon: const Icon(Icons.close)))

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:plotline_task/src/models/tooltip_model.dart';
-import 'package:plotline_task/src/services/tooltip/my_tooltip.dart';
+import 'package:plotline_task/src/services/tooltip/myTooltip.dart';
 import 'package:plotline_task/src/views/tooltip_renderer.dart';
 import 'package:plotline_task/src/widgets/button.dart';
 
-import '../services/tooltip/tooltip_position.dart';
+
 
 class HomePage extends StatelessWidget {
   HomePage({super.key, required this.tooltipProperties});
   final List<TooltipProperties>? tooltipProperties;
-  TooltipPosition bjkb = TooltipPosition.top;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +67,6 @@ class HomePage extends StatelessWidget {
                             })),
                   ],
                 ),
-              
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

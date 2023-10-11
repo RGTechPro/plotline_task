@@ -1,53 +1,82 @@
+// my_color_picker.dart
 import 'package:flutter/material.dart';
-import 'package:plotline_task/src/constants.dart';
 
-import 'my_color_picker.dart';
+class MyColorPicker extends StatefulWidget {
+  // This function sends the selected color to outside
+  final Function onSelectColor;
 
-class ColorPicker extends StatelessWidget {
-  final String label;
+  // List of pickable colors
+  final List<Color> availableColors;
+
+  // The default picked color
   final Color initialColor;
-  final Function(Color) onSelectColor;
 
-  const ColorPicker({super.key, 
-    required this.label,
-    required this.initialColor,
-    required this.onSelectColor,
-  });
+  // Determnie shapes of color cells
+  final bool circleItem;
+
+  const MyColorPicker(
+      {Key? key,
+      required this.onSelectColor,
+      required this.availableColors,
+      required this.initialColor,
+      this.circleItem = true})
+      : super(key: key);
+
+  @override
+  State<MyColorPicker> createState() => _MyColorPickerState();
+}
+
+class _MyColorPickerState extends State<MyColorPicker> {
+  // This variable used to determine where the checkmark will be
+  late Color _pickedColor;
+
+  @override
+  void initState() {
+    _pickedColor = widget.initialColor;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      flex: 1,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(
-              label,
-              style: kFormLabelTextStyle
+    return SizedBox(
+      width: double.infinity,
+      height: 65,
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 30,
+            childAspectRatio: 1 / 1,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10),
+        itemCount: widget.availableColors.length,
+        itemBuilder: (context, index) {
+          final itemColor = widget.availableColors[index];
+          return InkWell(
+            onTap: () {
+              widget.onSelectColor(itemColor);
+              setState(() {
+                _pickedColor = itemColor;
+              });
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                  color: itemColor,
+                  shape: widget.circleItem == true
+                      ? BoxShape.circle
+                      : BoxShape.rectangle,
+                  border: Border.all(width: 1, color: Colors.grey.shade300)),
+              child: itemColor == _pickedColor
+                  ? const Center(
+                      child: Icon(
+                        Icons.check,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : Container(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: MyColorPicker(
-              onSelectColor: onSelectColor,
-              availableColors: const [
-                Colors.white,
-                Colors.black,
-                Colors.blue,
-                Colors.green,
-                Colors.greenAccent,
-                Colors.yellow,
-                Colors.orange,
-                Colors.red,
-                Colors.purple,
-                Colors.grey,
-              ],
-              initialColor: initialColor,
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

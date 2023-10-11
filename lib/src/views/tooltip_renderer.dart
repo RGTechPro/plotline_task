@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:plotline_task/src/models/tooltip_model.dart';
-import 'package:plotline_task/src/services/tooltip/default_properties.dart';
-import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
+import 'package:plotline_task/src/services/tooltip/defaultProperties.dart';
+import 'package:plotline_task/src/services/tooltip/tooltipPosition.dart';
+
 import 'package:plotline_task/src/views/home_page.dart';
 
-import '../widgets/colorPicker.dart';
+import '../widgets/colorPickerWrapper.dart';
 import '../widgets/formFieldwithLabel.dart';
 import '../widgets/imagePicker.dart';
 import '../widgets/textFormField.dart';
@@ -51,7 +52,7 @@ class _TooltipFormState extends State<TooltipForm> {
   Color backgroundColor = Colors.black;
   Uint8List? image;
 
-  double aspectRatio = 1;
+  double aspectRatio = double.infinity;
 
   List<String> buttons = [
     'Button 1',
@@ -87,7 +88,7 @@ class _TooltipFormState extends State<TooltipForm> {
     idx = buttons
         .indexWhere((element) => element == targetElementController.text);
     // Setting the properties list to controller values of the target element
-    properties[idx!] = TooltipProperties(
+    properties[idx] = TooltipProperties(
         isHidden: false,
         targetElement: targetElementController.text,
         tooltipText: tooltipTextController.text,
@@ -97,13 +98,13 @@ class _TooltipFormState extends State<TooltipForm> {
         backgroundColor: backgroundColor,
         cornerRadius: double.parse(cornerRadiusController.text),
         tooltipWidth: double.parse(tooltipWidthController.text),
-        arrowWidth: double.parse(arrowHeightController.text),
+        arrowWidth: double.parse(arrowWidthController.text),
         arrowHeight: double.parse(
           arrowHeightController.text,
         ),
         tooltipPosition: tooltipPosition!,
         image: image,
-        aspectRatio: aspectRatio!);
+        aspectRatio: aspectRatio);
   }
 
   @override
@@ -152,6 +153,7 @@ class _TooltipFormState extends State<TooltipForm> {
                           properties[idx].tooltipPosition.name;
                       textColor = properties[idx].textColor;
                       backgroundColor = properties[idx].backgroundColor;
+                      aspectRatio = double.infinity;
                     });
                   },
                   controller: targetElementController,
