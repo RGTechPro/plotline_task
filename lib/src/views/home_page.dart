@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:plotline_task/src/models/tooltip_model.dart';
 import 'package:plotline_task/src/services/tooltip/my_tooltip.dart';
+import 'package:plotline_task/src/views/tooltip_renderer.dart';
 import 'package:plotline_task/src/widgets/button.dart';
 
 import '../services/tooltip/tooltip_position.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.tooltipProperties});
+class HomePage extends StatelessWidget {
+  HomePage({super.key, required this.tooltipProperties});
   final List<TooltipProperties>? tooltipProperties;
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   TooltipPosition bjkb = TooltipPosition.top;
-
-  @override
-  void initState() {
-   
-    
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,35 +26,90 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MyToolTip(
-                        tooltipProperty: widget.tooltipProperties![0],
-                        
-                        child: MyButton(text: 'Button 1', onPressed: () {})),
+                        tooltipProperty: tooltipProperties![0],
+                        child: MyButton(
+                            text: 'Button 1',
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const TooltipForm(
+                                            buttonText: 'Button 1',
+                                          )));
+                            })),
                     MyToolTip(
-                        tooltipProperty: widget.tooltipProperties![1],
-                        
-                        child: MyButton(text: 'Button 2', onPressed: () {}))
+                        tooltipProperty: tooltipProperties![1],
+                        child: MyButton(
+                            text: 'Button 2',
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const TooltipForm(
+                                            buttonText: 'Button 2',
+                                          )));
+                            }))
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     MyToolTip(
-                        tooltipProperty: widget.tooltipProperties![2],
-                       
-                        child: MyButton(text: 'Button 3', onPressed: () {})),
+                        tooltipProperty: tooltipProperties![2],
+                        child: MyButton(
+                            text: 'Button 3',
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const TooltipForm(
+                                            buttonText: 'Button 3',
+                                          )));
+                            })),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    MyButton(
+                        text: 'Button 3',
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const TooltipForm(
+                                        buttonText: 'Button hsdgfhjs',
+                                      )));
+                        }),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MyToolTip(
-                        tooltipProperty: widget.tooltipProperties![3],
-
-                        child: MyButton(text: 'Button 4', onPressed: () {})),
+                        tooltipProperty: tooltipProperties![3],
+                        child: MyButton(
+                            text: 'Button 4',
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const TooltipForm(
+                                            buttonText: 'Button 4',
+                                          )));
+                            })),
                     MyToolTip(
-                        tooltipProperty: widget.tooltipProperties![4],
-
-                        child: MyButton(text: 'Button 5', onPressed: () {}))
+                        tooltipProperty: tooltipProperties![4],
+                        child: MyButton(
+                            text: 'Button 5',
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const TooltipForm(
+                                            buttonText: 'Button 5',
+                                          )));
+                            }))
                   ],
                 ),
               ]),

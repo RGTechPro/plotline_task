@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:plotline_task/src/constants.dart';
 import 'package:plotline_task/src/models/tooltip_model.dart';
 import 'package:plotline_task/src/services/tooltip/default_properties.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 import 'package:plotline_task/src/views/home_page.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../widgets/colorPicker.dart';
 import '../widgets/formFieldwithLabel.dart';
 import '../widgets/imagePicker.dart';
-import '../widgets/my_color_picker.dart';
 import '../widgets/textFormField.dart';
 
 class TooltipForm extends StatefulWidget {
-  const TooltipForm({super.key});
-
+  const TooltipForm({super.key, this.buttonText = 'Button 1'});
+  final String buttonText;
   @override
   _TooltipFormState createState() => _TooltipFormState();
 }
@@ -24,7 +21,7 @@ class _TooltipFormState extends State<TooltipForm> {
   final _formKey = GlobalKey<FormState>();
 
   // Initial target element is 'Button 1'
-  final targetElementController = TextEditingController(text: 'Button 1');
+  final targetElementController = TextEditingController();
 
   // Defining the controllers for the form fields
   final tooltipTextController = TextEditingController();
@@ -38,9 +35,11 @@ class _TooltipFormState extends State<TooltipForm> {
 
   TooltipPosition? tooltipPosition = TooltipPosition.auto;
   String selectedTooltipPosition = 'auto'; // Default position
-  Color textColor = Colors.white;
+  Color textColor = Colors.white; // write initial
   Color backgroundColor = Colors.black;
-  XFile? image;
+  Uint8List? image;
+  String? fileName;
+  double? aspectRatio;
   List<String> buttons = [
     'Button 1',
     'Button 2',
@@ -65,6 +64,12 @@ class _TooltipFormState extends State<TooltipForm> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    targetElementController.text = widget.buttonText;
+    super.initState();
+  }
+
   // Used to set the properties list to the controller values
   void setProperties() {
     // Mapping the current target element to an index
@@ -73,22 +78,22 @@ class _TooltipFormState extends State<TooltipForm> {
         .indexWhere((element) => element == targetElementController.text);
     // Setting the properties list to controller values of the target element
     properties[idx] = TooltipProperties(
-      isHidden: false,
-      targetElement: targetElementController.text,
-      tooltipText: tooltipTextController.text,
-      textSize: double.parse(textSizeController.text),
-      padding: double.parse(paddingController.text),
-      textColor: textColor,
-      backgroundColor: backgroundColor,
-      cornerRadius: double.parse(cornerRadiusController.text),
-      tooltipWidth: double.parse(tooltipWidthController.text),
-      arrowWidth: double.parse(arrowHeightController.text),
-      arrowHeight: double.parse(
-        arrowHeightController.text,
-      ),
-      tooltipPosition: tooltipPosition!,
-      image: image
-    );
+        isHidden: false,
+        targetElement: targetElementController.text,
+        tooltipText: tooltipTextController.text,
+        textSize: double.parse(textSizeController.text),
+        padding: double.parse(paddingController.text),
+        textColor: textColor,
+        backgroundColor: backgroundColor,
+        cornerRadius: double.parse(cornerRadiusController.text),
+        tooltipWidth: double.parse(tooltipWidthController.text),
+        arrowWidth: double.parse(arrowHeightController.text),
+        arrowHeight: double.parse(
+          arrowHeightController.text,
+        ),
+        tooltipPosition: tooltipPosition!,
+        image: image,
+        aspectRatio: aspectRatio!);
   }
 
   @override
@@ -107,17 +112,18 @@ class _TooltipFormState extends State<TooltipForm> {
                 FormFieldWithLabel(
                   label: 'Target Element',
                   items: buttons,
+
+                  // useless condituion
                   value: targetElementController.text.isEmpty
                       ? null
                       : targetElementController.text,
                   onChanged: (value) {
-                    setState(() {
-                      //   setProperties();
-                      targetElementController.text = value!;
-                    });
+                    //   setProperties();
+                    targetElementController.text = value!;
                   },
                   controller: targetElementController,
                   onTap: () {
+                    // remoove this
                     // Optional onTap handler
                   },
                 ),
@@ -274,9 +280,9 @@ class _TooltipFormState extends State<TooltipForm> {
                       label: 'Text Color',
                       initialColor: textColor,
                       onSelectColor: (value) {
-                        setState(() {
-                          textColor = value;
-                        });
+                        // setState(() {
+                        textColor = value;
+                        // });
                       },
                     ),
                     // ---------- Background Color Selector ----------
@@ -284,9 +290,9 @@ class _TooltipFormState extends State<TooltipForm> {
                       label: 'Background Color',
                       initialColor: backgroundColor,
                       onSelectColor: (value) {
-                        setState(() {
-                          backgroundColor = value;
-                        });
+                        // setState(() {
+                        backgroundColor = value;
+                        // });
                       },
                     ),
                   ],
@@ -299,20 +305,27 @@ class _TooltipFormState extends State<TooltipForm> {
                     FormFieldWithLabel(
                       label: 'Tooltip Position',
                       value: selectedTooltipPosition,
-                      items: ['top', 'bottom', 'right', 'left', 'auto'],
+                      items: const [
+                        'top',
+                        'bottom',
+                        'right',
+                        'left',
+                        'auto'
+                      ], // fixed this
                       onChanged: (value) {
-                        setState(() {
-                          selectedTooltipPosition = value!;
-                          tooltipPosition = TooltipPosition.values.firstWhere(
-                              (e) => e.name == selectedTooltipPosition);
-                        });
+                        selectedTooltipPosition = value!;
+                        tooltipPosition = TooltipPosition.values.firstWhere(
+                            (e) => e.name == selectedTooltipPosition);
                       },
                       controller: tooltipPositionController,
                     ),
                     // ---------- Image Picker ----------
                     ImagePickerWidget(
-                      onTap: () async {
-                        await pickImage();
+                      onTap: (image) {
+                        this.image = image;
+                      },
+                      aspectRatio: (value) {
+                        aspectRatio = value;
                       },
                     )
                   ],
@@ -333,9 +346,9 @@ class _TooltipFormState extends State<TooltipForm> {
                           backgroundColor: const Color(0xFF0B58D9),
                         ),
                         onPressed: () {
-                          
                           if (_formKey.currentState!.validate()) {
-                            if (mounted) {setProperties();
+                            if (mounted) {
+                              setProperties();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -361,18 +374,5 @@ class _TooltipFormState extends State<TooltipForm> {
         ),
       ),
     );
-  }
-
-  Future pickImage() async {
-    try {
-      final image = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-      );
-      if (image == null) return;
-      final imageTemp = XFile(image.path);
-      setState(() => this.image = imageTemp);
-    } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
-    }
   }
 }

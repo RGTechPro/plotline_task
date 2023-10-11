@@ -1,5 +1,6 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:plotline_task/src/services/tooltip/tooltip_position.dart';
 
 class TooltipProperties {
@@ -14,8 +15,10 @@ class TooltipProperties {
   final double tooltipWidth;
   final double arrowWidth;
   final double arrowHeight;
-  final XFile? image;
+  final Uint8List? image;
   final TooltipPosition tooltipPosition;
+  final double? tootltipHeight;
+  final double aspectRatio;
   TooltipProperties(
       {required this.isHidden,
       required this.targetElement,
@@ -29,5 +32,7 @@ class TooltipProperties {
       required this.arrowWidth,
       required this.arrowHeight,
       required this.tooltipPosition,
-      this.image});
+      this.image,
+      this.tootltipHeight,
+      required this.aspectRatio});
 }

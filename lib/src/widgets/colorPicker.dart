@@ -8,7 +8,7 @@ class ColorPicker extends StatelessWidget {
   final Color initialColor;
   final Function(Color) onSelectColor;
 
-  ColorPicker({
+  const ColorPicker({super.key, 
     required this.label,
     required this.initialColor,
     required this.onSelectColor,
